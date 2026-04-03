@@ -1,0 +1,138 @@
+[
+  {
+    "questionId": "Q01",
+    "question": "How do you fix VPN disconnections caused by Windows update KB5034441?",
+    "expectedAnswer": "Roll back KB5034441 via DISM, then install GlobalProtect v6.2 patch which resolves the compatibility. Also increase the gateway timeout from 30s to 60s in the GP portal config.",
+    "sourceTicketIds": [
+      "TKT-001"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "questionId": "Q02",
+    "question": "What should I check when Bloomberg terminal can't connect to the B-PIPE feed?",
+    "expectedAnswer": "Check if the Palo Alto firewall rules for Bloomberg B-PIPE ports (8194-8196) are enabled. These can be accidentally disabled during firewall maintenance. Verify with packet capture and add Bloomberg rules to a protected rules group requiring manager approval before modification.",
+    "sourceTicketIds": [
+      "TKT-003"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "questionId": "Q03",
+    "question": "A new hire can't connect to VPN and gets 'invalid certificate' error. What's the likely cause?",
+    "expectedAnswer": "The laptop was likely imaged with an outdated GPO template pointing to a decommissioned CA server, so the machine certificate was not auto-enrolled. Fix: manually request a certificate from the current CA, install it in the Local Machine store, restart GlobalProtect. Update the imaging template.",
+    "sourceTicketIds": [
+      "TKT-005"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "questionId": "Q04",
+    "question": "We have recurring SSL certificate expiry issues on internal services. How should we prevent them?",
+    "expectedAnswer": "Set up a certificate monitoring dashboard covering all internal certificates with 30-day expiry warnings. Configure ACME clients for auto-renewal where possible. For legacy systems that don't support ACME, maintain a manual renewal tracking calendar. Two recent examples: the SMTP relay certificate caused SolarWinds email alerts to silently fail, and the HR portal certificate caused browser warnings for users.",
+    "sourceTicketIds": [
+      "TKT-022",
+      "TKT-032"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "questionId": "Q05",
+    "question": "A user accidentally tried to upload confidential data to personal Google Drive. What DLP controls should we implement?",
+    "expectedAnswer": "Block all personal cloud storage uploads (Google Drive, Dropbox, OneDrive personal) via Zscaler CASB policy while allowing corporate-sanctioned storage (SharePoint, corporate OneDrive). DLP should detect and block uploads containing classified data. Counsel the user on data handling policy and notify the compliance team.",
+    "sourceTicketIds": [
+      "TKT-031"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "questionId": "Q06",
+    "question": "What's the process for handling a terminated employee's account that's still active?",
+    "expectedAnswer": "Immediately disable the AD account and change password. Revoke all Azure AD sessions and app consents. Check sign-in logs for any post-termination activity. Remove from all security groups. Investigate why automated deprovisioning failed (in this case, the ServiceNow-AD connector API token was broken). Set up a daily reconciliation report comparing HR termination list against AD account status.",
+    "sourceTicketIds": [
+      "TKT-029"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "questionId": "Q07",
+    "question": "CrowdStrike detected and blocked a ransomware attempt. What's the incident response procedure?",
+    "expectedAnswer": "Isolate the workstation from the network. Perform forensic analysis to determine the attack vector (in this case, a malicious Excel macro). Check if any lateral movement occurred. Wipe and re-image the affected workstation. Block the sender domain and malicious IP ranges in Exchange and Zscaler. Implement blocking of external Excel files with macros. Conduct emergency security briefing. Report to FBI IC3 and share IOCs with FS-ISAC.",
+    "sourceTicketIds": [
+      "TKT-036"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "questionId": "Q08",
+    "question": "Conference room WiFi keeps dropping during video calls. How do you fix it?",
+    "expectedAnswer": "Check if the AP is on congested 2.4GHz channel. Reconfigure to force 5GHz band with 40MHz channel width. Increase minimum RSSI to -70dBm. Check physical placement - metal objects can cause signal reflection. In this case, the AP behind a metal whiteboard frame needed relocation to a ceiling mount.",
+    "sourceTicketIds": [
+      "TKT-004"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "questionId": "Q09",
+    "question": "What happened when Apex developers couldn't push to Git and how was it fixed?",
+    "expectedAnswer": "The Azure DevOps PAT used by the shared build service account had expired. Developers had cloned repos using the build service URL so their credential managers were affected. Generated a new PAT, updated credentials on all machines. Long-term fix: migrated developers to SSH key authentication which doesn't expire.",
+    "sourceTicketIds": [
+      "TKT-017"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "questionId": "Q10",
+    "question": "How do you set up a 4-monitor Bloomberg trading desk when the docking station only supports 3 displays?",
+    "expectedAnswer": "Use a StarTech USB-A to DisplayPort adapter (USB32DPES2) for the 4th monitor. This uses DisplayLink technology which works independently of the Thunderbolt display pipeline. Install the DisplayLink driver and configure Windows for the 4-monitor layout.",
+    "sourceTicketIds": [
+      "TKT-049"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "questionId": "Q11",
+    "question": "We're seeing high latency to CME exchange. Normal is 2ms, now it's 15-25ms. What should we check?",
+    "expectedAnswer": "Run a traceroute to check for additional hops through transit networks. The ISP may have made a BGP route change due to maintenance. Contact the ISP to request traffic engineering to restore the direct path. As interim, switch to a dedicated market data circuit (like Colt) for exchange traffic. This can restore latency quickly while waiting for the ISP to fix the primary path.",
+    "sourceTicketIds": [
+      "TKT-010"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "questionId": "Q12",
+    "question": "PowerBI dashboard is showing no data since midnight but the database has data. What's wrong?",
+    "expectedAnswer": "Check the on-premises data gateway service. It may have crashed (OutOfMemoryException during a large report refresh is common). Increase the gateway VM memory and restart the service. Configure automatic restart on failure. Consider migrating to PowerBI Premium capacity to eliminate the on-prem gateway.",
+    "sourceTicketIds": [
+      "TKT-026"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "questionId": "Q13",
+    "question": "What are the firewall considerations when onboarding a new third-party vendor platform?",
+    "expectedAnswer": "Add the vendor's IP range to the firewall allowlist for required ports (typically HTTPS 443). Check if the platform uses certificate pinning - if so, add it to the SSL decryption exclusion list since SSL inspection will break pinned connections. Verify all endpoints including API endpoints. Update the vendor onboarding checklist to include firewall rule requests as a mandatory step.",
+    "sourceTicketIds": [
+      "TKT-008"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "questionId": "Q14",
+    "question": "How should we handle backup encryption for data containing trading strategies and client PII?",
+    "expectedAnswer": "Enable AES-256 encryption at rest on backup storage. Use an encryption key management appliance. Migrate existing data to encrypted volumes. Implement BitLocker on backup staging servers. Use TLS 1.3 for data in transit. Store encryption keys in Azure Key Vault for escrow. Audit all data storage locations for encryption gaps.",
+    "sourceTicketIds": [
+      "TKT-038"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "questionId": "Q15",
+    "question": "Multiple Silverline users had Outlook password prompts every 30 minutes after enabling Conditional Access. What happened?",
+    "expectedAnswer": "The Conditional Access policy required compliant devices, but some users had Intune enrollment issues causing their devices to report as non-compliant. The policy fell back to basic auth prompts. Fix: re-run Intune enrollment and verify compliance status. Adjust token lifetime to 12 hours during transition. Always verify all devices are Intune-enrolled and compliant before enabling Conditional Access policies.",
+    "sourceTicketIds": [
+      "TKT-014"
+    ],
+    "difficulty": "medium"
+  }
+]
